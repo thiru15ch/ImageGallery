@@ -1,4 +1,5 @@
 from django.shortcuts import render, redirect
+from django.views.generic import ListView
 from .models import Category, Photo
 # Create your views here.
 
@@ -6,13 +7,14 @@ from .models import Category, Photo
 def gallery(request):
     category = request.GET.get('category')
     if category == None:
-        photos = Photo.objects.all()
+        photos = Photo.objects.all().order_by('-date_uploaded')
     else:
         photos = Photo.objects.filter(category__name=category)
 
     categories = Category.objects.all()
     context = {'categories': categories, 'photos': photos}
     return render(request, 'photos/gallery.html', context)
+
 
 
 def viewPhoto(request, pk):
@@ -37,8 +39,7 @@ def addPhoto(request):
 
         for image in images:
             photo = Photo.objects.create(
-                category=category,
-                description=data['description'],
+                category=category,                
                 image=image,
             )
 
